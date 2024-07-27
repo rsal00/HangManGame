@@ -6,7 +6,9 @@
 //
 
 #include <iostream>
+#include <vector>
 
+// function prototypes
 std::string createWord();
 void displayWord(std::string, char);
 void hangmanGame();
@@ -14,12 +16,13 @@ int linearSearch(std::string, char);
 
 int main() {
     
+    // calling main game function
     hangmanGame();
-    
     
     return 0;
 }
 
+// gets random word from array list and returns it
 std::string createWord() {
     const int WORD_AMOUNT = 10;
     
@@ -40,30 +43,35 @@ std::string createWord() {
     return randomWord;
 }
 
+// displays the word as '_' when no guess has been made or it is wrong
 void displayWord(std::string wordToGuess, char letter) {
     
     char s;
-    for (int i = 0; i < wordToGuess.length(); i++)
+    unsigned long length = wordToGuess.length();
+
+    for (int i = 0; i < length; i++)
     {
         int result = linearSearch(wordToGuess, letter);
-        unsigned long character = wordToGuess.length();
         
-        s = character;
-        s = '_';
-        
-        if (result > 0) {
-            if (letter == wordToGuess.at(i))
+        do
+        {
+            s = length;
+            s = '_';
+            
+            if (result > 0) 
             {
-                s = letter;
+                if (letter == wordToGuess.at(i))
+                {
+                    s = letter;
+                }
             }
-        }
-
-        std::cout << s << ' ';
+            std::cout << s << ' ';
+        } while (wordToGuess.back() == letter);
     }
-    
     std::cout << std::endl;
 }
 
+// main gain function calling other functions when appropriate
 void hangmanGame(){
     
     std::cout << "--WELCOME TO HANGMAN--\n" << "(CASE SENSITIVE!! - use lowercase typing)\n\n";
@@ -72,8 +80,9 @@ void hangmanGame(){
     char userInput;
     wordToGuess = createWord();
     std::cout << wordToGuess << std::endl;
+    bool guess = false;
     
-    for (int i = 0; i < wordToGuess.length(); i++)
+    while (!guess)
     {
         std::cout << "WORD: ";
         displayWord(wordToGuess, userInput);
@@ -82,7 +91,16 @@ void hangmanGame(){
         
         std::cout << "Guess a letter: ";
         std::cin >> userInput;
+        
+        // checking to make sure user finishes typing the word until its last letter
+        if (wordToGuess.back() == userInput)
+        {
+            guess = true;
+        }
     }
+    
+    std::cout << "CORRECT! WORD IS '" << wordToGuess << "'" << std::endl;
+    
 //    int result = linearSearch(wordToGuess, userInput);
 //    
 //    if (result > 0)
@@ -94,6 +112,7 @@ void hangmanGame(){
 //    }
 }
 
+// algorithm to find a letter in a word with a user inputted char value
 int linearSearch(std::string word, char value) {
     
     long size = word.length();
@@ -107,4 +126,3 @@ int linearSearch(std::string word, char value) {
     }
     return -1;
 }
-
