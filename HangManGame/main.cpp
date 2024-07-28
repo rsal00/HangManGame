@@ -14,6 +14,8 @@ void displayWord(std::string, char);
 void hangmanGame();
 int linearSearch(std::string, char);
 
+std::string currentDisplay;
+
 int main() {
     
     // calling main game function
@@ -24,10 +26,12 @@ int main() {
 
 // gets random word from array list and returns it
 std::string createWord() {
-    const int WORD_AMOUNT = 10;
+    const int WORD_AMOUNT = 20;
     
     std::string words[WORD_AMOUNT] = { "north", "south", "east", "west", "wave",
-                                       "weight", "guitar", "piano", "keyboard", "fortunate" };
+                                       "weight", "guitar", "piano", "keyboard", "fortunate",
+                                       "phone", "honesty", "corridor", "table", "desk",
+                                       "outside", "university", "monster", "universe", "audio"};
     
     std::string randomWord;
     bool hasWord = false;
@@ -43,73 +47,24 @@ std::string createWord() {
     return randomWord;
 }
 
-// displays the word as '_' when no guess has been made or it is wrong
+// displays the word as '_' when no guess has been made or guees is wrong
 void displayWord(std::string wordToGuess, char letter) {
     
-    char s;
     unsigned long length = wordToGuess.length();
 
     for (int i = 0; i < length; i++)
     {
-        int result = linearSearch(wordToGuess, letter);
-        
-        do
+        if (wordToGuess.at(i) == letter)
         {
-            s = length;
-            s = '_';
-            
-            if (result > 0) 
-            {
-                if (letter == wordToGuess.at(i))
-                {
-                    s = letter;
-                }
-            }
-            std::cout << s << ' ';
-        } while (wordToGuess.back() == letter);
-    }
-    std::cout << std::endl;
-}
-
-// main gain function calling other functions when appropriate
-void hangmanGame(){
-    
-    std::cout << "--WELCOME TO HANGMAN--\n" << "(CASE SENSITIVE!! - use lowercase typing)\n\n";
-    
-    std::string wordToGuess;
-    char userInput;
-    wordToGuess = createWord();
-    std::cout << wordToGuess << std::endl;
-    bool guess = false;
-    
-    while (!guess)
-    {
-        std::cout << "WORD: ";
-        displayWord(wordToGuess, userInput);
-        
-        std::cout << "\n";
-        
-        std::cout << "Guess a letter: ";
-        std::cin >> userInput;
-        
-        // checking to make sure user finishes typing the word until its last letter
-        if (wordToGuess.back() == userInput)
-        {
-            guess = true;
+            currentDisplay[i] = letter;
         }
     }
     
-    std::cout << "CORRECT! WORD IS '" << wordToGuess << "'" << std::endl;
-    
-//    int result = linearSearch(wordToGuess, userInput);
-//    
-//    if (result > 0)
-//    {
-//        std::cout << "Correct!\n";
-//    }
-//    else{
-//        std::cout << "Wrong!\n";
-//    }
+    for (auto c : currentDisplay)
+    {
+        std::cout << c << ' ';
+    }
+    std::cout << std::endl;
 }
 
 // algorithm to find a letter in a word with a user inputted char value
@@ -125,4 +80,46 @@ int linearSearch(std::string word, char value) {
         }
     }
     return -1;
+}
+
+// main game function calling other functions when appropriate
+void hangmanGame(){
+    
+    std::cout << "--WELCOME TO HANGMAN--\n" << "(CASE SENSITIVE!! - use lowercase typing)\n\n";
+    
+    std::string wordToGuess;
+    wordToGuess = createWord();
+    
+    long length = wordToGuess.length();
+    currentDisplay = std::string(length, '_');
+    
+    char userInput;
+    bool guess = false;
+    
+    while (!guess)
+    {
+        std::cout << "WORD: ";
+        displayWord(wordToGuess, userInput);
+        
+        std::cout << "\n";
+        
+        std::cout << "Guess a letter: ";
+        std::cin >> userInput;
+        
+        for (size_t i = 0; i < length; ++i)
+        {
+            if (wordToGuess[i] == userInput)
+            {
+                currentDisplay[i] = userInput;
+            }
+        }
+        
+        if (currentDisplay == wordToGuess)
+        {
+            guess = true;
+        }
+        
+    }
+    
+    std::cout << "CORRECT! WORD IS '" << wordToGuess << "'" << std::endl;
 }
